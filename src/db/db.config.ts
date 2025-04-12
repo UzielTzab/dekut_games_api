@@ -7,7 +7,7 @@ const dbConfig = {
     database: process.env.MYSQL_DATABASE || 'bmmarktsbxj2c7qhvyit',
     port: parseInt(process.env.MYSQL_PORT || '3306'),
     waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 5,
     queueLimit: 0
 };
 
@@ -15,12 +15,16 @@ const dbConfig = {
 export const pool = mysql.createPool(dbConfig);
 
 export const connectToDatabase = async () => {
+    let connection;
     try {
-        await pool.getConnection();
+        connection = await pool.getConnection();
+        await connection.ping();
         console.log("Conexión a MySQL establecida correctamente");
     } catch (error) {
         console.error("Error al conectar con MySQL:", error);
         throw error;
+    } finally {
+        if (connection) connection.release();
     }
 };
 
