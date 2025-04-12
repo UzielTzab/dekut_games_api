@@ -1,10 +1,10 @@
 
 import mysql from 'mysql2/promise';
 const dbConfig = {
-    host: process.env.MYSQL_HOST || 'bmmarktsbxj2c7qhvyit-mysql.services.clever-cloud.com',
-    user: process.env.MYSQL_USER || 'uxpmdf4sifxhjm8f',
-    password: process.env.MYSQL_PASSWORD || 'VG8qdBqqBu8cs6PL8Ubc',
-    database: process.env.MYSQL_DATABASE || 'bmmarktsbxj2c7qhvyit',
+    host: process.env.MYSQL_HOST || 'b5dec3z1lbdqbukjerhu-mysql.services.clever-cloud.com',
+    user: process.env.MYSQL_USER || 'u3ejwykkckyxxuut',
+    password: process.env.MYSQL_PASSWORD || 'QQz67NpXhKf6wlukv6RA',
+    database: process.env.MYSQL_DATABASE || 'b5dec3z1lbdqbukjerhu',
     port: parseInt(process.env.MYSQL_PORT || '3306'),
     waitForConnections: true,
     connectionLimit: 5,
