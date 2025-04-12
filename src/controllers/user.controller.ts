@@ -1,3 +1,4 @@
+import { connectToDatabase } from './../db/db.config';
 import { Request, Response } from "express";
 import { pool } from "../db/db.config";
 import User from "../models/user.model";
@@ -5,22 +6,28 @@ import { CreateUserDto } from '../dto/create_user.dto';
 import { AuthDto } from '../dto/auth.dto';
 
 export const getAllUsers = async (req: Request, res: Response) => {
+    let connection;
     try {
-        const [rows] = await pool.query("SELECT * FROM USERS");
+        connection = await pool.getConnection();
+        const [rows] = await connection.query("SELECT * FROM USERS");
         const users: User[] = rows as User[];
 
         res.status(200).json(users);
     } catch (error) {
         console.error("Error fetching users:", error);
         res.status(500).json({ message: "Internal server error" });
+    } finally {
+        if (connection) connection.release();
     }
 }
 
 export const authenticateUser = async (req: Request, res: Response) => {
+    let connection;
     try {
+        connection = await pool.getConnection();
         const { email_user, password_user }: AuthDto = req.body;
 
-        const [rows] = await pool.query(
+        const [rows] = await connection.query(
             "SELECT * FROM USERS WHERE email_user = ? AND password_user = ?",
             [email_user, password_user]
         );
@@ -41,11 +48,15 @@ export const authenticateUser = async (req: Request, res: Response) => {
     } catch (error) {
         console.error("Error al autenticar el usuario:", error);
         res.status(500).json({ message: "No se pudo autenticar al usuario por un error interno del servidor" });
+    } finally {
+        if (connection) connection.release();
     }
 }
 
 export const createUser = async (req: Request, res: Response) => {
+    let connection;
     try {
+        connection = await pool.getConnection();
         const { name_user, email_user, password_user }: CreateUserDto = req.body;
 
         if (!name_user || !email_user || !password_user) {
@@ -53,7 +64,7 @@ export const createUser = async (req: Request, res: Response) => {
             return;
         }
 
-        await pool.query(
+        await connection.query(
             "INSERT INTO USERS (name_user, email_user, password_user) VALUES (?, ?, ?)",
             [name_user, email_user, password_user]
         );
@@ -70,5 +81,7 @@ export const createUser = async (req: Request, res: Response) => {
     } catch (error) {
         console.error("Error al crear usuario:", error);
         res.status(500).json({ message: "Error al crear el usuario" });
+    } finally {
+        if (connection) connection.release();
     }
 }
